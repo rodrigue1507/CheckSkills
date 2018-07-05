@@ -1,0 +1,67 @@
+
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Category')
+BEGIN 
+	CREATE TABLE Category (
+		Id INT  PRIMARY KEY IDENTITY,
+		Name VARCHAR(200),
+		Content VARCHAR(MAX)
+	);
+END
+
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='difficulty')
+BEGIN
+CREATE Table Difficulty (
+	Id INT PRIMARY KEY IDENTITY,
+	DifficultyLevel TINYINT
+);
+END
+
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='QuestionType')
+BEGIN
+Create TABLE QuestionType (
+	Id INT PRIMARY KEY IDENTITY,
+	Name VARCHAR(200),
+	Content VARCHAR(MAX)
+);
+END
+
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Question')
+BEGIN
+CREATE TABLE Question (
+	Id INT PRIMARY KEY IDENTITY,
+	CategoryId INT FOREIGN KEY REFERENCES Category(Id),
+	DifficultyId INT FOREIGN KEY REFERENCES Difficulty(Id),
+	QuestionTypeId INT FOREIGN KEY REFERENCES Question(Id),
+	Content VARCHAR(MAX)
+);
+END
+
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Response')
+BEGIN
+CREATE TABLE Response (
+    Id INT PRIMARY KEY IDENTITY,
+	QuestionId INT FOREIGN KEY REFERENCES Question(Id),
+    Content VARCHAR(MAX),
+	IsCorrect BIT, 
+);
+END
+
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Survey')
+BEGIN
+CREATE TABLE Survey (
+	Id INT PRIMARY KEY IDENTITY,
+	Name VARCHAR(200),
+	Content VARCHAR(MAX)
+);
+END
+
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Survey_Question')
+BEGIN
+CREATE TABLE Survey_Question (
+	Id INT PRIMARY KEY IDENTITY,
+	QuestionId INT FOREIGN KEY REFERENCES Question(Id),
+	SurveyId INT FOREIGN KEY REFERENCES Survey(Id),
+);
+END
+
+

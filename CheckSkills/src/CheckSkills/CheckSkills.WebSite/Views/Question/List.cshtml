@@ -1,0 +1,28 @@
+﻿@model IEnumerable<QuestionViewModel>
+@{
+    ViewData["Title"] = "Liste des questions";
+    string montitecommenceparAA = "AA";
+    Layout = "_Layout"; 
+}
+<h2>Liste des questions @montitecommenceparAA</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Content</td>            
+        </tr>
+    </thead>
+    @foreach (var questionVM in Model)
+    {
+        <tr>
+            <td>
+                @questionVM.Id
+            </td>
+            <td>
+                @questionVM.Content
+            </td>
+
+        </tr>
+    }
+</table>
+
