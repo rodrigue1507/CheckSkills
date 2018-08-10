@@ -1,0 +1,18 @@
+﻿@model QuestionViewModel
+
+@Html.HiddenFor(m => m.Id)
+<table>
+    <tr>
+        <td>
+            @Html.CheckBoxFor(m => m.IsChecked, new { @class = "selectedQuestion" })
+        </td>
+        <td>
+
+            @Html.DisplayFor(m => m.Content)
+            @Html.DisplayFor(m => m.CategoryName)
+            @Html.DisplayFor(m => m.DifficultyLevel)
+            @Html.DisplayFor(m => m.TypeName)
+        </td>
+    </tr>
+</table>
+

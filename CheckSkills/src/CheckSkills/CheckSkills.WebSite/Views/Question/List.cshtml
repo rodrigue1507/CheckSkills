@@ -1,28 +1,42 @@
 ﻿@model IEnumerable<QuestionViewModel>
+
 @{
     ViewData["Title"] = "Liste des questions";
-    string montitecommenceparAA = "AA";
-    Layout = "_Layout"; 
+    string montitre = "diponible dans la base";
+    Layout = "_Layout";
 }
-<h2>Liste des questions @montitecommenceparAA</h2>
-<table border="1">
-    <thead>
-        <tr>
-            <td>Id</td>
-            <td>Content</td>            
-        </tr>
-    </thead>
+<h2>Liste des questions @montitre</h2>
+
+@using (Html.BeginForm("List", "Question", FormMethod.Post))
+{
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Difficulté</th>
+        <th>Contenu</th>
+
+    </tr>
+   
+
     @foreach (var questionVM in Model)
     {
         <tr>
             <td>
-                @questionVM.Id
+                @questionVM.TypeName
+            </td>
+            <td>
+                @questionVM.DifficultyLevel
             </td>
             <td>
                 @questionVM.Content
             </td>
-
+            <td>@Html.ActionLink("Supprimer", "ConfirmDeleteOrNo", new { type = "button", @class = "btn btn-link", questionId = questionVM.Id })</td>
+            <td>@Html.ActionLink("Modifier", "Edit", new { type = "button", @class = "btn btn-link", questionId = questionVM.Id })</td>
         </tr>
+
     }
+    <tr>@Html.ActionLink("Créer une question", "Create", "Question", null, new { type = "button", @class = "btn btn-primary" })</tr>
 </table>
+}
+
 

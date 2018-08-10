@@ -8,5 +8,9 @@ namespace CheckSkills.Domain
         IEnumerable<Question> GetAll();
 
         int CreateQuestion(Question q);
+
+        int UpdateQuestion(Question q);
+
+        void DeleteQuestion(int questionId);
     }
 }

@@ -9,5 +9,8 @@ namespace CheckSkills.Domain
     public interface IResponseDao
     {
         IEnumerable<Response> GetAll();
+        int CreateResponse(Response r);
+        int UpdateResponse(Response r);
+        void DeleteResponse(int reponseId);
     }
 }

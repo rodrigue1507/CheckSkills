@@ -53,6 +53,27 @@ namespace CheckSkills.WebSite
                     defaults: new { Controller = "Question", Action = "Create" });
 
                 routes.MapRoute(
+                    name: "EditQuestion",
+                    template: "modifier-une-question",
+                    defaults: new { Controller = "Question", Action = "Details" });
+
+                routes.MapRoute(
+                   name: "ConfirmDeleteQuestion",
+                   template: "Confirmation-suppression",
+                   defaults: new { Controller = "Question", Action = "ConfirmDeleteOrNo" });
+
+                routes.MapRoute(
+                  name: "DeleteQuestion",
+                  template: "supprimer-une-question",
+                  defaults: new { Controller = "Question", Action = "ConfirmDeleteOrNo" });
+
+                //routes.MapRoute(
+                //   name: "CreateQuestion",
+                //   template: "creation-Formulaire",
+                //   defaults: new { Controller = "Survey", Action = "Create" });
+
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });

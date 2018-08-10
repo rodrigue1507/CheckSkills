@@ -8,9 +8,9 @@ namespace CheckSkills.Domain.Entities
         {
             public int Id { get; set; }
             public string Content { get; set; }
-             
-            public Category Category  { get; set; }
-            public Difficulty Difficulty { get; set; }
-            public QuestionType QuestionType { get; set; }
+            public QuestionCategory Category  { get; set; }
+            public QuestionDifficulty Difficulty { get; set; }
+            public QuestionType Type { get; set; }
+            public string QuestionEvaluation { get; set; }
         }
     }
