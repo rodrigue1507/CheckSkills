@@ -157,16 +157,16 @@ namespace CheckSkills.WebSite.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult Delete(int questionId)
         {
 
             _questionDao.DeleteQuestion(questionId);
 
-            return RedirectToAction("list");
+            return RedirectToAction("List");
         }
         
-
+        [HttpGet]
         public IActionResult ConfirmDeleteOrNo(int questionId)
         {
             var question = _questionDao.GetAll().FirstOrDefault(q => q.Id == questionId);
@@ -181,7 +181,7 @@ namespace CheckSkills.WebSite.Controllers
                     CategoryName = question.Category.Name,
                     QuestionTypeName = question.Type.Name,
                 };
-                return RedirectToAction("Delete");
+                return View("ConfirmDeleteOrNo",model);
             }
 
             return RedirectToAction("DeleteError");
