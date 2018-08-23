@@ -1,22 +1,16 @@
-﻿using CheckSkills.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace CheckSkills.Domain
 {
     public interface ISurveyDao
     {
-        IEnumerable<Question> GetAll();
-        IEnumerable<Question> GetByPreferencies(int categoryId, int typeId, int difficultyId);
+        //IEnumerable<Survey> GetByPreferencies(string name);
         IEnumerable<Survey> GetAllSurvey();
-        IEnumerable<QuestionCategory> GetAllQuestionCategory();
-        IEnumerable<QuestionType> GetAllQuestionType();
-        IEnumerable<QuestionDifficulty> GetAllQuestionDifficulty();
-        int CreateSurvey(Survey q);
+
+        void CreateSurvey(string name, List<int> questionIds);
 
         int UpdateSurvey(Survey q);
-
+    
         void DeleteSurvey(Survey q);
     }
 }

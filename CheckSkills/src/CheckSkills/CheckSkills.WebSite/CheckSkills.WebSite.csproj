@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
-    <PackageReference Include="RazorPDF" Version="1.0.0" />
+    <PackageReference Include="Rotativa.AspNetCore" Version="1.0.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +42,10 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Rotativa\" />
   </ItemGroup>
 
 </Project>

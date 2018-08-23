@@ -9,3 +9,8 @@ as
 begin  
    SELECT Id,QuestionCategoryId,QuestionDifficultyId,QuestionTypeId,Content FROM Question ;
 End
+
+
+
+
+E

@@ -2,15 +2,6 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.0": {
-      "iTextSharp/4.1.2": {
-        "type": "package",
-        "compile": {
-          "lib/itextsharp.dll": {}
-        },
-        "runtime": {
-          "lib/itextsharp.dll": {}
-        }
-      },
       "jQuery/1.8.0": {
         "type": "package"
       },
@@ -2900,18 +2891,6 @@
           "lib/netstandard1.3/NuGet.Frameworks.dll": {}
         }
       },
-      "RazorPDF/1.0.0": {
-        "type": "package",
-        "dependencies": {
-          "iTextSharp": "4.1.2"
-        },
-        "compile": {
-          "lib/net45/RazorPDF.dll": {}
-        },
-        "runtime": {
-          "lib/net45/RazorPDF.dll": {}
-        }
-      },
       "Remotion.Linq/2.1.1": {
         "type": "package",
         "dependencies": {
@@ -2932,6 +2911,18 @@
         },
         "runtime": {
           "lib/netstandard1.0/Remotion.Linq.dll": {}
+        }
+      },
+      "Rotativa.AspNetCore/1.0.6": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc": "2.0.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/Rotativa.AspNetCore.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Rotativa.AspNetCore.dll": {}
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -5099,17 +5090,6 @@
     }
   },
   "libraries": {
-    "iTextSharp/4.1.2": {
-      "sha512": "oaEtKpJaMHTs6fw3YZ3ZZ9LuZYGM59Qgd6LFeM1KAnZJgrIjhJkUMiKWepgVEr5SpbuPQoaMPTtqbALUKhWgoQ==",
-      "type": "package",
-      "path": "itextsharp/4.1.2",
-      "files": [
-        "itextsharp.4.1.2.nupkg.sha512",
-        "itextsharp.nuspec",
-        "lib/itextsharp.dll",
-        "lib/itextsharp.dtd"
-      ]
-    },
     "jQuery/1.8.0": {
       "sha512": "laDFQRJrIRHT0Z0GVYklMt3bE0iu0MZFJwHwg21kt3SHb7Bj8TdNiM3K+ZdK1DzB8ZxKy8z7NkJvwMas+dmHBw==",
       "type": "package",
@@ -8121,17 +8101,6 @@
         "nuget.frameworks.nuspec"
       ]
     },
-    "RazorPDF/1.0.0": {
-      "sha512": "haoQGv8mJw4SNa+hMz7oKAFy+VTddes5EG4z7wsIv0odjHSXgjG4dAOQ7xrYaBeqioGOfDQHZbo/pstGqSFcfw==",
-      "type": "package",
-      "path": "razorpdf/1.0.0",
-      "files": [
-        "lib/net40/RazorPDF.dll",
-        "lib/net45/RazorPDF.dll",
-        "razorpdf.1.0.0.nupkg.sha512",
-        "razorpdf.nuspec"
-      ]
-    },
     "Remotion.Linq/2.1.1": {
       "sha512": "IJn0BqkvwEDpP+2qjvci7n4/a9f7DhKESLWb2/uG4xQh3rTkGTBUz69bI4IivCoKkTFAqjXxYDZw2K/npohjsw==",
       "type": "package",
@@ -8149,6 +8118,16 @@
         "lib/portable-net45+win+wpa81+wp80/Remotion.Linq.xml",
         "remotion.linq.2.1.1.nupkg.sha512",
         "remotion.linq.nuspec"
+      ]
+    },
+    "Rotativa.AspNetCore/1.0.6": {
+      "sha512": "LtvTaKlyWq4R1g5OxzMYqMS72adypYoHTMJAaQ/Liw5H/ezr5UKxPexOMnb98W5BuohCjokJJiwujr7au4lLBA==",
+      "type": "package",
+      "path": "rotativa.aspnetcore/1.0.6",
+      "files": [
+        "lib/netstandard2.0/Rotativa.AspNetCore.dll",
+        "rotativa.aspnetcore.1.0.6.nupkg.sha512",
+        "rotativa.aspnetcore.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -13308,7 +13287,7 @@
       "Microsoft.NETCore.App >= 2.0.0",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 2.0.2",
       "Microsoft.jQuery.Unobtrusive.Ajax >= 3.2.5",
-      "RazorPDF >= 1.0.0"
+      "Rotativa.AspNetCore >= 1.0.6"
     ]
   },
   "packageFolders": {
@@ -13337,6 +13316,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {},
         "https://proget.fd.fnac.com/nuget/DefaultNuGet/": {},
         "https://proget.fd.fnac.com/nuget/FnacNuGet/": {}
       },
@@ -13378,9 +13358,9 @@
             "target": "Package",
             "version": "[3.2.5, )"
           },
-          "RazorPDF": {
+          "Rotativa.AspNetCore": {
             "target": "Package",
-            "version": "[1.0.0, )"
+            "version": "[1.0.6, )"
           }
         },
         "imports": [
@@ -13390,27 +13370,5 @@
         "warn": true
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'iTextSharp 4.1.2' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
-      "libraryId": "iTextSharp",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'RazorPDF 1.0.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
-      "libraryId": "RazorPDF",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    }
-  ]
+  }
 }

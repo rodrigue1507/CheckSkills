@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Rotativa.AspNetCore;
 
 namespace CheckSkills.WebSite
 {
@@ -67,16 +68,17 @@ namespace CheckSkills.WebSite
                   template: "supprimer-une-question",
                   defaults: new { Controller = "Question", Action = "ConfirmDeleteOrNo" });
 
-                //routes.MapRoute(
-                //   name: "CreateQuestion",
-                //   template: "creation-Formulaire",
-                //   defaults: new { Controller = "Survey", Action = "Create" });
-
+                routes.MapRoute(
+                name: "SaveSurvey",
+                template: "sauvergarde-formulaire",
+                defaults: new { Controller = "Survey", Action = "SaveSurvey" });
 
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            RotativaConfiguration.Setup(env);
         }
     }
 }

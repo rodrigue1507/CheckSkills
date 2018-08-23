@@ -10,9 +10,11 @@ Create procedure [dbo].GetByPreferencies
 
 as
 begin  
-   SELECT Id,QuestionCategoryId,QuestionDifficultyId,QuestionTypeId,Content FROM Question 
+   SELECT distinct Id,QuestionCategoryId,QuestionDifficultyId,QuestionTypeId,Content FROM Question 
    where QuestionCategoryId = @questionCategoryId
    and QuestionDifficultyId = @questionDifficultyId
    and QuestionTypeId = @questionTypeId
     ;
 End
+
+EXEC  GetByPreferencies @questionCategoryId =1, @questionDifficultyId = 1, @questionTypeId=1

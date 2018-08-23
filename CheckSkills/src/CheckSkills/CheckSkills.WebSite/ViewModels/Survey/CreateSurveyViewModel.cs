@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CheckSkills.WebSite.ViewModels
 {
     public class CreateSurveyViewModel
     {
         public int? Id { get; set; }
+
+       
+        [Display(Name = "Donner un nom au Formulaire")]
         public string Name { get; set; }
         public string SurveyEvaluation { get; set; }
 

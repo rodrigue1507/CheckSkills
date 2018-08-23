@@ -32,8 +32,8 @@ namespace CheckSkills.WebSite.Controllers
         [HttpGet]
         public IActionResult List()
         {
-
-            var questions = _questionDao.GetAll();
+            
+             var questions = _questionDao.GetAll();
 
             // Convertir en view models, 
             // en recuperant seulement les données dont la vue a besoin
@@ -74,7 +74,6 @@ namespace CheckSkills.WebSite.Controllers
                     Content = model.Content,
                     Difficulty = new QuestionDifficulty { Id = model.DifficultyId },
                     Type = new QuestionType { Id = model.TypeId }
-
                 };
 
                 var questionId = _questionDao.CreateQuestion(question);
@@ -247,7 +246,6 @@ namespace CheckSkills.WebSite.Controllers
             }
 
             return RedirectToAction("Details", new { questionId });
-
         }
 
         [HttpGet]
@@ -310,18 +308,6 @@ namespace CheckSkills.WebSite.Controllers
         }
 
 
-
-
-        //public IActionResult Edit(CreateOrUpdateQuestionViewModel question)
-        //{
-        //    var question = new CreateOrUpdateFormViewModel()
-        //    {
-
-        //    };
-        //    return RedirectToAction("edit");
-        //}
-
-
         private void AddReferenceDataToModel(CreateOrUpdateQuestionViewModel model)
         {
             if (model == null)
@@ -349,30 +335,6 @@ namespace CheckSkills.WebSite.Controllers
             });
         }
 
-
-
-        //private IEnumerable<dynamic> Getcategories()
-        //{
-        //    yield return new { Id = -1, Name = "Choisir" };
-        //    yield return new { Id = 1, Name = "Html" };
-        //    yield return new { Id = 2, Name = "C#" };
-        //    yield return new { Id = 3, Name = "Javascript" };
-        //}
-
-        //private IEnumerable<dynamic> GetDifficulties()
-        //{
-        //    yield return new { Id = -1, Name = "Choisir" };
-        //    yield return new { Id = 1, Name = "1" };
-        //    yield return new { Id = 2, Name = "2" };
-        //    yield return new { Id = 3, Name = "3" };
-        //}
-
-        //private IEnumerable<dynamic> GetQuestionTypes()
-        //{
-        //    yield return new { Id = -1, Name = "Choisir" };
-        //    yield return new { Id = 1, Name = "QCM" };
-        //    yield return new { Id = 2, Name = "Question-Reponse" };
-        //}
 
     }
 }

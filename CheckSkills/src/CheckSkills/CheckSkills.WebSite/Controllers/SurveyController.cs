@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CheckSkills.DAL;
 using CheckSkills.Domain;
 using CheckSkills.Domain.Entities;
 using CheckSkills.WebSite.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Rotativa.AspNetCore;
 
 namespace CheckSkills.WebSite.Controllers
 {
@@ -16,6 +18,7 @@ namespace CheckSkills.WebSite.Controllers
         private IQuestionDifficultyDao _difficultyDao;
         private IQuestionTypeDao _questionTypeDao;
         private IResponseDao _responseDao;
+
         private const int CATEGORY_ID = 1;
         private const int TYPE_ID = 1;
         private const int DIFFICULTY_ID = 1;
@@ -31,38 +34,13 @@ namespace CheckSkills.WebSite.Controllers
         }
 
 
-        [HttpGet]
-        public IActionResult QuestionList()
-        {
-            var questions = _questionDao.GetAll();
-
-            // Convertir en view models, 
-            // en recuperant seulement les données dont la vue a besoin
-            var QuestionListViewModels = new List<QuestionViewModel>();
-            if (questions != null && questions.Any())
-            {
-                foreach (var question in questions)
-                {
-                    QuestionListViewModels.Add(
-                        new QuestionViewModel()
-                        {
-                            Id = question.Id,
-                            CategoryName = question.Category.Name,
-                            TypeName = question.Type.Name,
-                            DifficultyLevel = question.Difficulty.DifficultyLevel,
-                            Content = question.Content,
-                        });
-                }
-            }
-            return View(QuestionListViewModels); // return des objets questions
-        }
-
+   
+        
 
         [HttpGet]
         public IActionResult Create()
         {
             var model = BuildSurveyViewModel();
-
             return View(model);
         }
 
@@ -70,9 +48,56 @@ namespace CheckSkills.WebSite.Controllers
         [HttpPost]
         public IActionResult Create(IEnumerable<SurveySelectedQuestionViewModel> surveySelectedQuestions)
         {
+            var selectedQuestionIds = surveySelectedQuestions.Where(q => q.IsChecked).Select(ssq => ssq.Id);
+            var model = GetConfirmationSurveyModel(selectedQuestionIds);
+            model.OriginalSurveySelectedQuestions = selectedQuestionIds;
+            return View("List", model);
+        }
 
-            // la liste des id questions selectionnées
-            var selectedQuestionIds = surveySelectedQuestions.Where(s => s.IsChecked).Select(ssq => ssq.Id);
+
+        [HttpGet]
+        public IActionResult PrintSurvey(IEnumerable<int>surveySelectedQuestions)
+        {
+            var model = GetConfirmationSurveyModel(surveySelectedQuestions);
+            return new ViewAsPdf("List", model);
+        }
+
+        [HttpPost]
+        public IActionResult SaveSurvey(CreateConfirmationSurveyViewModel surveyModel)
+        {
+            var survey = new Survey
+            {
+                Name = surveyModel.Name
+            };
+
+            try
+            {
+                _surveyDao.CreateSurvey(surveyModel.Name, surveyModel.OriginalSurveySelectedQuestions.ToList());
+            }
+            catch(Exception exception)
+            {
+
+            }
+
+            var model = GetConfirmationSurveyModel(surveyModel.OriginalSurveySelectedQuestions);
+            model.Name = surveyModel.Name;
+
+            return View("SaveSurvey", model);
+        }
+
+        public IActionResult ShowSurveyByName(string name)
+        {
+            var model = GetConfirmationSurveyModelByName(name);
+            return View("List", model);
+        }
+
+        private CreateConfirmationSurveyViewModel GetConfirmationSurveyModelByName(string name)
+        {
+            return new CreateConfirmationSurveyViewModel();
+        }
+
+        private CreateConfirmationSurveyViewModel GetConfirmationSurveyModel(IEnumerable<int> selectedQuestionIds)
+        {
             //récupérer la liste des questions selectionnés
             var questions = _questionDao.GetAll().Where(q => selectedQuestionIds.Contains(q.Id));
             var questionListViewModels = new List<QuestionViewModel>();
@@ -90,28 +115,26 @@ namespace CheckSkills.WebSite.Controllers
                             TypeName = question.Type.Name,
                             DifficultyLevel = question.Difficulty.DifficultyLevel,
                             Content = question.Content,
-                            QuestionResponseList = responses.Where(r=> r.QuestionId == question.Id).Select(r=> new CreateOrUpdateQuestionResponseViewModel
+                            QuestionResponseList = responses.Where(r => r.QuestionId == question.Id).Select(r => new CreateOrUpdateQuestionResponseViewModel
                             {
                                 Id = r.Id,
                                 QuestionId = r.QuestionId,
                                 QuestionContent = question.Content,
                                 ResponseContent = r.Content
                             }).ToList()
-
                         });
                 }
             }
 
             // create confirmation survey viewModel
-            var model = new CreateConfirmationSurveyViewModel
+            return new CreateConfirmationSurveyViewModel
             {
                 Id = null,
-                Name ="Formulaire XXX" ,
+                Name = "Formulaire XXX",
                 SurveySelectedQuestions = questionListViewModels
             };
-
-            return View("List", model);
         }
+
 
 
         //methode permettant de filtrer les questions en fonction des preferences (SurveyFilterInfo)
@@ -119,10 +142,11 @@ namespace CheckSkills.WebSite.Controllers
         public IActionResult FilterQuestions(SurveyFilterInfoViewModel surveyFilterInfo)
         {
             var model = BuildSurveyViewModel(surveyFilterInfo);
-
+ 
             return View("Create", model);
-            // return new RazorPDF.PdfResult(model, "Create");
+            //return new PdfResult(model, "Create");
         }
+
 
 
         //cette methode prend en parametre le filtre de l'utilisateur et retourne le model associé
@@ -204,53 +228,5 @@ namespace CheckSkills.WebSite.Controllers
 
 
 
-
-//public IActionResult Category()
-//{
-//    var categories = _surveyDao.GetAllQuestionCategory();
-//    var Types = _surveyDao.GetAllQuestionType();
-
-//    var CategoriesListViewModels = new List<CreateSurveyViewModels>();
-//    var TypesListViewModels = new List<CreateSurveyViewModels>();
-
-//    if (categories != null && categories.Any())
-//    {
-//        foreach (var category in categories)
-//        {
-//            CategoriesListViewModels.Add(
-//                new CreateSurveyViewModels
-//                {
-//                    categoryId = category.Id,
-//                    CategoryName = category.Name
-//                });
-
-//        }
-//    }
-
-//return 
-//    if (Types != null && Types.Any())
-//    {
-//        foreach (var Type in Types)
-//        {
-//            TypesListViewModels.Add(
-//                new CreateSurveyViewModels
-//                {
-//                    TypeId = Type.Id,
-//                    TypeName = Type.Name
-//                });
-
-//        }
-//    }
-
-//    return View(Create); // return des objets questions
-//}
-
-
-//public IActionResult SurveyList()
-//{
-//    var questions = 
-//}
-//    }
-//}
 
 
