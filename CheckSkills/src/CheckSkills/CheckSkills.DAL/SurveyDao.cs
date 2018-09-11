@@ -114,6 +114,7 @@ namespace CheckSkills.DAL
             }
         }
 
+
         public int UpdateSurvey(Survey q)
         {
             using (SqlConnection sqlConnection1 = new SqlConnection(_connectionString)) // using permet de refermer la connection après ouverture
@@ -163,6 +164,10 @@ namespace CheckSkills.DAL
                 cmd.ExecuteNonQuery();
             }
         }
+
+  
+
+
 
         //public IEnumerable<Survey> GetByPreferencies( string name)
         //{

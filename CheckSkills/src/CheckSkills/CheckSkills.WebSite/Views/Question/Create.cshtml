@@ -1,21 +1,23 @@
-﻿@model CreateOrUpdateQuestionViewModel
+﻿@model EditQuestionViewModel
 @{
     ViewData["Title"] = "Creation";
 }
 
-<h2>Create</h2>
+<div class="page-header">Creation-question</div>
 
 @using (Html.BeginForm("Create", "Question", FormMethod.Post))
 {
-
+<div>
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
     <div class="form-group row ">
-        @Html.LabelFor(m => m.DifficultyId, new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-6">
-            @Html.DropDownListFor(m => m.DifficultyId, Model.Difficulties, new { @class = "form-control" })
-        </div>
+                @Html.LabelFor(m => m.DifficultyId, new { @class = "col-sm-2 col-form-label" })
+            
+                <div class="col-sm-6">
+                    @Html.DropDownListFor(m => m.DifficultyId, Model.Difficulties, new { @class = "form-control" })
+                </div> 
     </div>
     <div class="form-group row">
+        
         @Html.LabelFor(m => m.TypeId, new { @class = "col-sm-2 col-form-label" })
         <div class="col-sm-6">
             @Html.DropDownListFor(m => m.TypeId, Model.QuestionTypes, new { @class = "form-control" })
@@ -30,11 +32,11 @@
     <div class="form-group row">
         @Html.LabelFor(m => m.Content, new { @class = "col-sm-2 col-form-label" })
         <div class="col-sm-6">
-            @Html.TextAreaFor(m => m.Content, new { @class = "form-control" })
+            @Html.TextAreaFor(m => m.Content, new { @class = "form-control", rows="6"})
         </div>
     </div>
 
- 
+
     <div class="center-block text-center">
         <input type="submit" class="btn btn-info" value="Soumettre" />
     </div>
@@ -42,4 +44,5 @@
     <div>
         @Html.ActionLink("retour à la liste", "List")
     </div>
+</div>
 }

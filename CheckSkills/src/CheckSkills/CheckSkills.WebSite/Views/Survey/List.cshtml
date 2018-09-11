@@ -1,8 +1,8 @@
 ﻿@model CreateConfirmationSurveyViewModel
 @{
-
     ViewData["Title"] = "Liste des questions";
-}
+    Layout = "_Layout";
+ }
 
 @using (Html.BeginForm("SaveSurvey", "Survey", FormMethod.Post))
 {
@@ -50,18 +50,17 @@
                                         <label>Question @i: </label>@questionVM.Content
                                     </div>
 
-                                    @foreach (var response in questionVM.QuestionResponseList)
+                                    @foreach (var answer in questionVM.QuestionAnswerList)
                                     {
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="response_@response.Id">
-                                            <label class="form-check-label" for="response_@response.Id">
-                                                @response.ResponseContent
+                                            <input class="form-check-input" type="checkbox" value="" id="answer_@answer.Id">
+                                            <label class="form-check-label" for="answer_@answer.Id">
+                                                @answer.AnswerContent
                                             </label>
                                         </div>
                                     }
                                     break;
                             }
-
                         }
                     </div>
 
@@ -71,22 +70,17 @@
         </div>
 
         <div class="row">
-            <input type="submit" class="btn btn-primary" value="Enregistrer le formulaire" />
+              <input type="submit" class="btn btn-primary" value="Enregistrer le formulaire" />
             @Html.ActionLink("Imprimer le formulaire", "PrintSurvey", "Survey", new { SurveySelectedQuestions = Model.OriginalSurveySelectedQuestions }, new { type = "button", @class = "btn btn-info pull-right" })
         </div>
-    </div>
 
-    @*@for (var q = 0; q < Model.OriginalSurveySelectedQuestions.Count(); q++)
-        {
-            var question = Model.OriginalSurveySelectedQuestions.ToList()[q];
+        @for (var q = 0; q < Model.OriginalSurveySelectedQuestions.Count(); q++)
+            {
+                var question = Model.OriginalSurveySelectedQuestions.ToList()[q];
 
-            @Html.Hidden("OriginalSurveySelectedQuestions", question)
-        }*@
-
-    @foreach (var question in Model.OriginalSurveySelectedQuestions)
-    {
-        @Html.Hidden("OriginalSurveySelectedQuestions", question)
-    }
+                @Html.Hidden("OriginalSurveySelectedQuestions", question)
+            }
+  </div>
 }
 
 

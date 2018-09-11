@@ -74,6 +74,11 @@ namespace CheckSkills.WebSite
                 defaults: new { Controller = "Survey", Action = "SaveSurvey" });
 
                 routes.MapRoute(
+                name: "exploreSurvey",
+                template: "explorer-formulaire",
+                defaults: new { Controller = "ExploreSurvey", Action = "List" });
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });

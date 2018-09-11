@@ -5,7 +5,7 @@ using CheckSkills.WebSite.ViewModels;
 using CheckSkills.DAL;
 using CheckSkills.Domain;
 using CheckSkills.Domain.Entities;
-using CheckSkills.WebSite.ViewModels.Response;
+using CheckSkills.WebSite.ViewModels.Answer;
 
 namespace CheckSkills.WebSite.Controllers
 {
@@ -16,7 +16,9 @@ namespace CheckSkills.WebSite.Controllers
         private IQuestionCategoryDao _categoryDao;
         private IQuestionDifficultyDao _difficultyDao;
         private IQuestionTypeDao _questionTypeDao;
-        private IResponseDao _responseDao;
+        private IAnswerDao _answerDao;
+        private ISurvey_QuestionDao _survey_QuestionDao;
+
         //constructeur de questions 
         public QuestionController()
         {
@@ -24,7 +26,8 @@ namespace CheckSkills.WebSite.Controllers
             _categoryDao = new QuestionCategoryDao();
             _difficultyDao = new QuestionDifficultyDao();
             _questionTypeDao = new QuestionTypeDao();
-            _responseDao = new ResponseDao();
+            _answerDao = new AnswerDao();
+            _survey_QuestionDao = new Survey_QuestionDao();
         }
 
 
@@ -59,7 +62,7 @@ namespace CheckSkills.WebSite.Controllers
 
 
         [HttpPost]
-        public IActionResult Create(CreateOrUpdateQuestionViewModel model)
+        public IActionResult Create(EditQuestionViewModel model)
         {
 
             if (ModelState.IsValid)
@@ -93,16 +96,59 @@ namespace CheckSkills.WebSite.Controllers
         public IActionResult Create()
         {
 
-            var model = new CreateOrUpdateQuestionViewModel();
+            var model = new EditQuestionViewModel();
             AddReferenceDataToModel(model);
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult Edit(int questionId)
+        {
+            var question = _questionDao.GetBydId(questionId);
+
+            if (question != null)
+            {
+                var model = new CreateOrUpdateQuestionViewModel()
+                {
+                    EditQuestionViewModel = new EditQuestionViewModel
+                    {
+                        Id = question.Id,
+                        Content = question.Content,
+                        DifficultyId = question.Difficulty.Id,
+                        TypeId = question.Type.Id,
+                        TypeName = question.Type.Name,
+                        CategoryId = question.Category.Id
+                    }
+                };
+
+                AddReferenceDataToModel(model.EditQuestionViewModel);
+                
+                if (question.Type.Name == "QCM")
+                {
+                    var answerDtos = _answerDao.GetAll().Where(r => r.QuestionId == questionId);
+                    var Answers = answerDtos.Select(r => new CreateOrUpdateQuestionAnswerViewModel
+                    {
+                        Id = r.Id,
+                        QuestionId = r.QuestionId,
+                        AnswerContent = r.Content,
+                        QuestionContent = question.Content
+                    }).ToList();
+
+                    model.EditAnswerViewModel = new EditAnswerViewModel
+                    {
+                        QuestionId = question.Id,
+                        QuestionAnswerList = Answers
+                    };
+                }
+
+                return View(model);
+            }
+            return RedirectToAction("List");
+        }
 
         [HttpPost]
-        public IActionResult Edit(CreateOrUpdateQuestionViewModel model)
+        public IActionResult EditQuestionSave(EditQuestionViewModel model)
         {
-
             if (ModelState.IsValid)
             {
                 // Traitement pour sauvegarder les questions
@@ -116,52 +162,50 @@ namespace CheckSkills.WebSite.Controllers
                     Content = model.Content,
                     Difficulty = new QuestionDifficulty { Id = model.DifficultyId },
                     Type = new QuestionType { Id = model.TypeId }
-                };
 
+                };
+               
                 var questionId = _questionDao.UpdateQuestion(question);
+
                 if (questionId > 0)
-                    return RedirectToAction("Details", new { questionId = questionId });
+                    return RedirectToAction("Details", new { questionId });
                 else
                     ModelState.AddModelError("CategoryId", "La question n'a pas été mise à jour!");
             }
 
+           
             AddReferenceDataToModel(model);
-            return View(model);
+
+            return View("Edit", model);
         }
 
-
-        [HttpGet]
-        public IActionResult Edit(int questionId)
+        public IActionResult EditAnswerSave(int answerId)
         {
-            var question = _questionDao.GetAll().FirstOrDefault(q => q.Id == questionId);
+            var answer = _answerDao.GetById(answerId);
 
-            if (question != null)
+            if (answer != null)
             {
-                var model = new CreateOrUpdateQuestionViewModel()
+                var question = _questionDao.GetBydId(answer.QuestionId);
+                var AnswerViewModel = new QuestionAnswerViewModel()
                 {
-                    Id = question.Id,
-                    Content = question.Content,
-                    DifficultyId = question.Difficulty.Id,
-                    TypeId = question.Type.Id,
-                    CategoryId = question.Category.Id,
+                    QuestionId = question.Id,
+                    QuestionContent = question.Content,
+                    AnswerContent = answer.Content,
+                    AnswerId = answer.Id
                 };
-                AddReferenceDataToModel(model);
-                return View(model);
+                return View("Edit", AnswerViewModel);
             }
-
-            return RedirectToAction("Edit");
-
+            
+            return RedirectToAction("List");
         }
-
-
-
 
         [HttpGet]
         public IActionResult Delete(int questionId)
         {
-
+            _survey_QuestionDao.DeleteQuestionSurvey(questionId);
+            _answerDao.DeleteAnswerQuestionId(questionId);
             _questionDao.DeleteQuestion(questionId);
-
+            //_answerDao.DeleteAnswerQuestion(questionId);
             return RedirectToAction("List");
         }
         
@@ -200,18 +244,19 @@ namespace CheckSkills.WebSite.Controllers
 
             if (question != null)
             {
-                List<CreateOrUpdateQuestionResponseViewModel> responses = null;
+                List<CreateOrUpdateQuestionAnswerViewModel> answers = null;
                 if (question.Type.Name == "QCM")
                 {
-                    var responseDtos = _responseDao.GetAll().Where(r => r.QuestionId == questionId);
-                    responses = responseDtos.Select(r => new CreateOrUpdateQuestionResponseViewModel
+                    var answerDtos = _answerDao.GetAll().Where(r => r.QuestionId == questionId);
+                    answers = answerDtos.Select(r => new CreateOrUpdateQuestionAnswerViewModel
                     {
                         Id = r.Id,
                         QuestionId = r.QuestionId,
-                        ResponseContent = r.Content,
+                        AnswerContent = r.Content,
                         QuestionContent = question.Content
                     }).ToList();
                 }
+
 
                 var model = new QuestionViewModel()
                 {
@@ -220,9 +265,8 @@ namespace CheckSkills.WebSite.Controllers
                     DifficultyLevel = question.Difficulty.DifficultyLevel,
                     CategoryName = question.Category.Name,
                     QuestionTypeName = question.Type.Name,
-                    QuestionResponseList = responses,
+                    QuestionAnswerList = answers,
                     TypeName = question.Type.Name
-
                 };
 
                 return View(model);
@@ -230,88 +274,90 @@ namespace CheckSkills.WebSite.Controllers
             return RedirectToAction("List");
         }
 
+       
+
+
 
         [HttpGet]
-        public IActionResult AddQuestionResponse(int questionId)
+        public IActionResult AddQuestionAnswer(int questionId)
         {
             var question = _questionDao.GetAll().FirstOrDefault(q => q.Id == questionId);
             if (question != null)
             {
-                var responseViewModel = new QuestionResponseViewModel()
+                var AnswerViewModel = new QuestionAnswerViewModel()
                 {
                     QuestionId = question.Id,
                     QuestionContent = question.Content
                 };
-                return View("AddOrUpdateQuestionResponse", responseViewModel);
+                return View("AddOrUpdateQuestionAnswer", AnswerViewModel);
             }
 
             return RedirectToAction("Details", new { questionId });
         }
 
         [HttpGet]
-        public IActionResult EditQuestionResponse(int responseId)
+        public IActionResult EditQuestionAnswer(int AnswerId)
         {
-            var response = _responseDao.GetAll().FirstOrDefault(r => r.Id == responseId);
+            var answer = _answerDao.GetById(AnswerId);
 
-            if (response != null)
+            if (answer != null)
             {
-                var question = _questionDao.GetAll().FirstOrDefault(q => q.Id == response.QuestionId);
-                var responseViewModel = new QuestionResponseViewModel()
+                var question = _questionDao.GetBydId(answer.QuestionId);
+                var answerViewModel = new QuestionAnswerViewModel()
                 {
                     QuestionId = question.Id,
                     QuestionContent = question.Content,
-                    ResponseContent = response.Content,
-                    ResponseId = response.Id
+                    AnswerContent = answer.Content,
+                    AnswerId = answer.Id
                 };
-                return View("AddOrUpdateQuestionResponse", responseViewModel);
+                return View("AddOrUpdateQuestionAnswer", answerViewModel);
             }
 
             return RedirectToAction("List");
-
         }
 
+
         [HttpPost]
-        public IActionResult AddOrUpdateQuestionResponse(QuestionResponseViewModel responseviewModel)
+        public IActionResult AddOrUpdateQuestionAnswer(QuestionAnswerViewModel answerviewModel)
         {
 
-            var response = new Response
+            var answer = new Answer
             {
-                Id = responseviewModel.ResponseId ?? 0,
-                QuestionId = responseviewModel.QuestionId,
-                Content = responseviewModel.ResponseContent
+                Id = answerviewModel.AnswerId ?? 0,
+                QuestionId = answerviewModel.QuestionId,
+                Content = answerviewModel.AnswerContent
             };
 
-            if (responseviewModel.ResponseId.HasValue && responseviewModel.ResponseId.Value > 0)
+            if (answerviewModel.AnswerId.HasValue && answerviewModel.AnswerId.Value > 0)
             {
-                _responseDao.UpdateResponse(response);
+                _answerDao.UpdateAnswer(answer);
             }
             else
             {
-                var responseId = _responseDao.CreateResponse(response);
+                var AnswerId = _answerDao.CreateAnswer(answer);
             }
 
-            return RedirectToAction("Details", new { questionId = responseviewModel.QuestionId });
-
+            return RedirectToAction("Details", new { questionId = answerviewModel.QuestionId });
         }
 
 
         [HttpGet]
-        public IActionResult DeleteQuestionResponse(int responseId)
+        public IActionResult DeleteQuestionAnswer(int answerId)
         {
-            var response = _responseDao.GetAll().FirstOrDefault(q => q.Id == responseId);
-            if (response != null)
+            var answer = _answerDao.GetById(answerId);
+            if (answer != null)
             {
-                _responseDao.DeleteResponse(responseId);
+                _answerDao.DeleteAnswer(answerId);
             }
-            return RedirectToAction("Details", new { questionId = response.QuestionId });
+            return RedirectToAction("Details", new { questionId = answer.QuestionId });
 
         }
 
 
-        private void AddReferenceDataToModel(CreateOrUpdateQuestionViewModel model)
+        private void AddReferenceDataToModel(EditQuestionViewModel model)
         {
             if (model == null)
-                model = new CreateOrUpdateQuestionViewModel();
+                model = new EditQuestionViewModel();
 
             model.Categories = _categoryDao.GetAllQuestionCategory().Select(o => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
@@ -328,7 +374,7 @@ namespace CheckSkills.WebSite.Controllers
                 Text = o.Name,
                 Value = o.Id.ToString()
             });
-            model.Responses = _responseDao.GetAll().Select(o => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            model.Answers = _answerDao.GetAll().Select(o => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
                 Text = o.Content,
                 Value = o.Id.ToString()

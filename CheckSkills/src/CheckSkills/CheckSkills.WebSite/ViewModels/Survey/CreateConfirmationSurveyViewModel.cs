@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace CheckSkills.WebSite.ViewModels
+
 {
     public class CreateConfirmationSurveyViewModel
     {

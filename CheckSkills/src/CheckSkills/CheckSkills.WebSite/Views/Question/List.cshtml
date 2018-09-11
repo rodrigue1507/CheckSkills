@@ -2,41 +2,49 @@
 
 @{
     ViewData["Title"] = "Liste des questions";
-    string montitre = "diponible dans la base";
-    Layout = "_Layout";
+    Layout = "_Layout3";
 }
-<h2>Liste des questions @montitre</h2>
+<div class="page-header">Liste des questions</div>
 
-@using (Html.BeginForm("List", "Question", FormMethod.Post))
-{
-<table> (var)
-    <tr>
-        <th>Type</th>
-        <th>Difficulté</th>
-        <th>Contenu</th>
+@*<div>@Html.ActionLink("Créer une question", "Create", "Question", null, new { type = "button", @class = "btn btn-primary btn-lg btn-block shadow-lg" })</div>*@
 
-    </tr>
-   
-
-    @foreach (var questionVM in Model)
+<div>
+    @using (Html.BeginForm("List", "Question", FormMethod.Post))
     {
-        <tr>
-            <td>
-                @questionVM.TypeName
-            </td>
-            <td>
-                @questionVM.DifficultyLevel
-            </td>
-            <td>
-                @questionVM.Content
-            </td>
-            <td>@Html.ActionLink("Supprimer", "ConfirmDeleteOrNo", new { type = "button", @class = "btn btn-link", questionId = questionVM.Id })</td>
-            <td>@Html.ActionLink("Modifier", "Edit", new { type = "button", @class = "btn btn-link", questionId = questionVM.Id })</td>
-        </tr>
+        <div style="overflow:scroll; height:550px;">
+            <table class="table table table-responsive table-bordered ">
+                <tr>
+                    <th class="text-center">Contenu</th>
+                    <th>Type</th>
+                    <th>catégorie</th>
+                    <th>Difficulté</th>
+                </tr>
+                @foreach (var questionVM in Model)
+                {
 
+                <tr>
+                    <td>
+                        @questionVM.Content
+                    </td>
+                    <td>
+                        @questionVM.TypeName
+                    </td>
+                    <td>
+                        @questionVM.CategoryName
+                    </td>
+                    <td class="text-center">
+                        @questionVM.DifficultyLevel
+                    </td>
+
+                    <td class="glyphicon glyphicon-trash">@Html.ActionLink("Supprimer", "ConfirmDeleteOrNo", new { type = "button", @class = "btn btn-link", questionId = questionVM.Id })</td>
+                    <td class="glyphicon glyphicon-edit">@Html.ActionLink("Modifier", "Edit", new { type = "button", @class = "btn btn-link", questionId = questionVM.Id })</td>
+                    <td class="glyphicon glyphicon-info-sign">@Html.ActionLink("détails", "Details", new { type = "button", @class = "btn btn-link", questionId = questionVM.Id })</td>
+                </tr>
+
+                }
+            </table>
+
+        </div>
     }
-    <tr>@Html.ActionLink("Créer une question", "Create", "Question", null, new { type = "button", @class = "btn btn-primary" })</tr>
-</table>
-}
-
+</div>
 

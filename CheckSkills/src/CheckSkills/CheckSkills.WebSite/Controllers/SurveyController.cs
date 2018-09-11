@@ -17,11 +17,12 @@ namespace CheckSkills.WebSite.Controllers
         private IQuestionCategoryDao _categoryDao;
         private IQuestionDifficultyDao _difficultyDao;
         private IQuestionTypeDao _questionTypeDao;
-        private IResponseDao _responseDao;
+        private IAnswerDao _answerDao;
+     
 
-        private const int CATEGORY_ID = 1;
-        private const int TYPE_ID = 1;
-        private const int DIFFICULTY_ID = 1;
+        private const int CATEGORY_ID = 0;
+        private const int TYPE_ID = 0;
+        private const int DIFFICULTY_ID = 0;
 
         public SurveyController()
         {
@@ -30,21 +31,20 @@ namespace CheckSkills.WebSite.Controllers
             _categoryDao = new QuestionCategoryDao();
             _difficultyDao = new QuestionDifficultyDao();
             _questionTypeDao = new QuestionTypeDao();
-            _responseDao = new ResponseDao();
+            _answerDao = new AnswerDao();
+          
         }
 
 
    
         
-
+        // actions permettant de creer le formulaire.
         [HttpGet]
         public IActionResult Create()
         {
             var model = BuildSurveyViewModel();
             return View(model);
         }
-
-
         [HttpPost]
         public IActionResult Create(IEnumerable<SurveySelectedQuestionViewModel> surveySelectedQuestions)
         {
@@ -55,13 +55,14 @@ namespace CheckSkills.WebSite.Controllers
         }
 
 
+
+        //action permettant d'imprimer le formulaire generer.
         [HttpGet]
         public IActionResult PrintSurvey(IEnumerable<int>surveySelectedQuestions)
         {
             var model = GetConfirmationSurveyModel(surveySelectedQuestions);
-            return new ViewAsPdf("List", model);
+            return new ViewAsPdf("PrintSurvey", model);
         }
-
         [HttpPost]
         public IActionResult SaveSurvey(CreateConfirmationSurveyViewModel surveyModel)
         {
@@ -85,10 +86,13 @@ namespace CheckSkills.WebSite.Controllers
             return View("SaveSurvey", model);
         }
 
+      
+
+        //action permettant d'afficher la liste les formulaire creer
         public IActionResult ShowSurveyByName(string name)
         {
             var model = GetConfirmationSurveyModelByName(name);
-            return View("List", model);
+            return View("ShowSaveSurvey", model);
         }
 
         private CreateConfirmationSurveyViewModel GetConfirmationSurveyModelByName(string name)
@@ -96,12 +100,14 @@ namespace CheckSkills.WebSite.Controllers
             return new CreateConfirmationSurveyViewModel();
         }
 
+
+
         private CreateConfirmationSurveyViewModel GetConfirmationSurveyModel(IEnumerable<int> selectedQuestionIds)
         {
             //récupérer la liste des questions selectionnés
             var questions = _questionDao.GetAll().Where(q => selectedQuestionIds.Contains(q.Id));
             var questionListViewModels = new List<QuestionViewModel>();
-            var responses = _responseDao.GetAll();
+            var answers = _answerDao.GetAll();
 
             if (questions != null && questions.Any())
             {
@@ -115,12 +121,12 @@ namespace CheckSkills.WebSite.Controllers
                             TypeName = question.Type.Name,
                             DifficultyLevel = question.Difficulty.DifficultyLevel,
                             Content = question.Content,
-                            QuestionResponseList = responses.Where(r => r.QuestionId == question.Id).Select(r => new CreateOrUpdateQuestionResponseViewModel
+                            QuestionAnswerList = answers.Where(r => r.QuestionId == question.Id).Select(r => new CreateOrUpdateQuestionAnswerViewModel
                             {
                                 Id = r.Id,
                                 QuestionId = r.QuestionId,
                                 QuestionContent = question.Content,
-                                ResponseContent = r.Content
+                                AnswerContent = r.Content
                             }).ToList()
                         });
                 }
@@ -130,7 +136,7 @@ namespace CheckSkills.WebSite.Controllers
             return new CreateConfirmationSurveyViewModel
             {
                 Id = null,
-                Name = "Formulaire XXX",
+                Name = null,
                 SurveySelectedQuestions = questionListViewModels
             };
         }
@@ -144,7 +150,7 @@ namespace CheckSkills.WebSite.Controllers
             var model = BuildSurveyViewModel(surveyFilterInfo);
  
             return View("Create", model);
-            //return new PdfResult(model, "Create");
+            
         }
 
 
@@ -215,6 +221,9 @@ namespace CheckSkills.WebSite.Controllers
 
             return model;
         }
+
+        // methode permettant de recupérer les données formulaires depuis la base.
+
     }
 }
 

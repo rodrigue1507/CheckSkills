@@ -8,6 +8,7 @@
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    border: 3px;
 }
 
 /* Carousel */
@@ -33,3 +34,55 @@
         display: none;
     }
 }
+
+.menu
+{
+   margin-bottom: 180px !important;
+}
+.filter-selected-option
+{
+    /*width: 350px !important;*/
+    margin: 13px;
+    margin-top:40px;
+    text-align:center;
+   
+}
+
+#scrollist {
+    overflow-y: scroll;
+}
+
+#filtre {
+    float: left;
+    width: 600px;
+    height: 530px;
+    /*margin-top: 20px;*/
+    position: absolute;
+}
+
+#question-list {
+    position: relative;
+    left: 700px;
+    width: 900px;
+    float: left;
+}
+
+
+footer
+{
+    clear:both;
+}
+
+hr
+{
+    clear:both;
+}
+
+#create-retour-button 
+{
+    clear: both;
+    top:30px;
+    
+}
+
+

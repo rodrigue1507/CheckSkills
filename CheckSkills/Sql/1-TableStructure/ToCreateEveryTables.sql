@@ -44,9 +44,9 @@ IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Question')
 		);
 	END 
 -------------------------------------------CREATION Response------------------------------------------------
-IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Response')
+IF NOT EXISTS(SELECT NULL FROM sys.tables WHERE name='Answer')
 	BEGIN 
-		CREATE TABLE Response(
+		CREATE TABLE Answer(
 			Id INT PRIMARY KEY IDENTITY,
 			QuestionId INT  FOREIGN KEY REFERENCES Question(Id),
 			Content VARCHAR(MAX),

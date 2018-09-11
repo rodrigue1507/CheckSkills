@@ -84,6 +84,68 @@ namespace CheckSkills.DAL
             return questions;
         }
 
+        public Question GetBydId(int questionId)
+        {
+            // Use ADO.Net to DB access
+
+
+            //objet de connection 
+            using (SqlConnection sqlConnection1 = new SqlConnection(_connectionString))
+            {
+                // Do work here
+                SqlCommand cmd = new SqlCommand  // objet cmd me permet d'exécuter des requêtes SQL
+                {
+                    CommandType = CommandType.Text, // methode permettant de definir le type de commande (text = une commande sql; Storeprocedure= le nom de la procedure stockée; TableDirect= le nom d'une table.
+                    CommandText = @"
+                                    SELECT 
+	                                    q.Id,
+	                                    q.QuestionCategoryId,
+	                                    q.QuestionDifficultyId,
+	                                    q.QuestionTypeId,
+	                                    q.Content,
+	                                    c.Name AS QuestionCategoryName,
+	                                    d.QuestionDifficultyLevel ,
+	                                    qt.Name AS QuestionTypeName
+                                    FROM Question q
+                                    INNER JOIN QuestionDifficulty d ON q.QuestionDifficultyId = d.Id
+                                    INNER JOIN QuestionType qt ON q.QuestionTypeId = qt.Id
+                                    INNER JOIN QuestionCategory c ON q.QuestionCategoryId = c.Id
+                                    WHERE q.Id = @questionId",
+                    Connection = sqlConnection1, // etablie la connection.
+                };
+                cmd.Parameters.AddWithValue("@questionId", questionId);
+                sqlConnection1.Open();
+
+                var result = cmd.ExecuteReader();
+
+                result.Read();
+
+                var question = new Question()
+                {
+                    Id = Convert.ToInt32(result["Id"]),//recupère l'id de question dans la database et le converti
+                    Category = new QuestionCategory()
+                    {
+                        Id = Convert.ToInt32(result["QuestionCategoryId"]),
+                        Name = result["QuestionCategoryName"].ToString()
+                    },
+                    Content = result["Content"].ToString(),
+
+                    Difficulty = new QuestionDifficulty()
+                    {
+                        Id = Convert.ToInt32(result["QuestionDifficultyId"]),
+                        DifficultyLevel = result["QuestionDifficultyLevel"].ToString()
+                    },
+                    Type = new QuestionType()
+                    {
+                        Id = Convert.ToInt32(result["QuestionTypeId"]),
+                        Name = result["QuestionTypeName"].ToString()
+                    },
+                };
+    
+                return question;
+            }
+        }
+        
 
         //methode permettant d'insérer une question dans la base de donnée
         public int CreateQuestion(Question q)
@@ -171,6 +233,5 @@ namespace CheckSkills.DAL
                 cmd.ExecuteNonQuery();
             }
         }
-
     }
 }

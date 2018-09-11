@@ -7,6 +7,8 @@ namespace CheckSkills.Domain
     {
         IEnumerable<Question> GetAll();
 
+        Question GetBydId(int questionId);
+
         int CreateQuestion(Question q);
 
         int UpdateQuestion(Question q);
